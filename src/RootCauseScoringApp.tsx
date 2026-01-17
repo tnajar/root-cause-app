@@ -559,9 +559,7 @@ function RatingChips({
   </select>
 
   {/* optional: tiny inline helper that DOESN’T affect the table much */}
-  <span className="hidden xl:inline text-xs text-muted-foreground">
-    V=Very · S=Somewhat · N=Not
-  </span>
+  
 </div>
 
   );
