@@ -70,13 +70,7 @@ function scoreToBand(score: number) {
   return { label: "Discard", className: "bg-zinc-200 text-zinc-800" };
 }
 
-function ratingChipClass(r: Rating, active: boolean) {
-  const base = "rounded-xl px-3 py-1 text-sm font-medium border transition";
-  if (!active) return `${base} bg-white text-zinc-700 hover:bg-zinc-50`;
-  if (r === "V") return `${base} bg-emerald-100 text-emerald-900 border-emerald-200`;
-  if (r === "S") return `${base} bg-amber-100 text-amber-900 border-amber-200`;
-  return `${base} bg-zinc-200 text-zinc-800 border-zinc-300`;
-}
+
 
 export default function RootCauseScoringApp() {
   const [title, setTitle] = useState("Root Cause Evaluation");
@@ -543,18 +537,32 @@ function RatingChips({
   onChange: (v: Rating) => void;
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2">
-      {(["N", "S", "V"] as Rating[]).map((r) => (
-        <button
-          key={r}
-          type="button"
-          className={ratingChipClass(r, value === r)}
-          onClick={() => onChange(r)}
-          aria-pressed={value === r}
-        >
-          {r}
-        </button>
-      ))}
-    </div>
+    <div className="flex items-center justify-center gap-2">
+  <select
+    value={value ?? ""}
+    onChange={(e) => onChange(e.target.value as Rating)}
+    className="h-9 w-14 rounded-md border px-2 text-sm bg-white text-center"
+    aria-label="Rating"
+  >
+    <option value="" disabled>
+      —
+    </option>
+    <option value="V" title="V (Very Likely)">
+      V
+    </option>
+    <option value="S" title="S (Somewhat Likely)">
+      S
+    </option>
+    <option value="N" title="N (Not Likely)">
+      N
+    </option>
+  </select>
+
+  {/* optional: tiny inline helper that DOESN’T affect the table much */}
+  <span className="hidden xl:inline text-xs text-muted-foreground">
+    V=Very · S=Somewhat · N=Not
+  </span>
+</div>
+
   );
 }
