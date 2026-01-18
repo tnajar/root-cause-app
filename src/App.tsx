@@ -1,15 +1,16 @@
 import { useState } from "react";
-import RootCauseScoringApp from "./RootCauseScoringApp";
-
-import type { SystemFraming } from "./type";
+import type { RootCause, SystemFraming } from "./type";
 import { SystemFramingScreen } from "./SystemFraming";
 import { SystemFramingSummary } from "./SystemFramingSummary";
+import RootCauseCandidatesPage from "./RootCauseCandidatesPage";
+import RootCauseEvaluationPage from "./RootCauseEvaluationPage";
 
-type Step = "framing" | "rca";
+type Step = "framing" | "candidates" | "evaluation";
 
 export default function App() {
   const [step, setStep] = useState<Step>("framing");
   const [framing, setFraming] = useState<SystemFraming | null>(null);
+  const [causes, setCauses] = useState<RootCause[]>([]);
 
   if (step === "framing") {
     return (
@@ -17,33 +18,34 @@ export default function App() {
         initial={framing}
         onSubmit={(f) => {
           setFraming(f);
-          setStep("rca");
+          setStep("candidates");
         }}
       />
     );
   }
 
-  // Safety guard — should never happen, but prevents undefined access
-  if (!framing) {
+  if (step === "candidates") {
     return (
-      <SystemFramingScreen
-        initial={null}
-        onSubmit={(f) => {
-          setFraming(f);
-          setStep("rca");
-        }}
-      />
+      <div>
+        <div className="mx-auto max-w-5xl p-4 sm:p-6">
+          {framing ? <SystemFramingSummary framing={framing} onEdit={() => setStep("framing")} /> : null}
+        </div>
+        <RootCauseCandidatesPage
+          causes={causes}
+          setCauses={setCauses}
+          onContinue={() => setStep("evaluation")}
+        />
+      </div>
     );
   }
 
+  // evaluation
   return (
-    <div style={{ maxWidth: 1000, margin: "0 auto", padding: 24 }}>
-      <SystemFramingSummary
-        framing={framing}
-        onEdit={() => setStep("framing")}
-      />
-
-      <RootCauseScoringApp />
+    <div>
+      <div className="mx-auto max-w-5xl p-4 sm:p-6">
+        {framing ? <SystemFramingSummary framing={framing} onEdit={() => setStep("framing")} /> : null}
+      </div>
+      <RootCauseEvaluationPage causes={causes} setCauses={setCauses} />
     </div>
   );
 }
